@@ -2,9 +2,10 @@ self.addEventListener('install', function(e) {
  e.waitUntil(
    caches.open('charge-calculator-store').then(function(cache) {
      return cache.addAll([
-       '/charge-calculator/battery-charging-64x64.png',
+       '/charge-calculator/',
        '/charge-calculator/index.html',
-       '/charge-calculator/index.js'
+       '/charge-calculator/index.js',
+       '/charge-calculator/battery-charging-64x64.png'
      ]);
    })
  );
