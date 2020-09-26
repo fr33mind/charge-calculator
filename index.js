@@ -3,5 +3,5 @@
 if('serviceWorker' in navigator) {
   navigator.serviceWorker
            .register('/charge-calculator/sw.js')
-           .then(function() { console.log('Service Worker Registered'); });
+           .then(function() { alert('Service Worker Registered'); });
 }
