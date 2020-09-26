@@ -9,6 +9,11 @@
     "src": "battery-charging-64x64.png",
     "sizes": "64x64",
     "type": "image/png"
+  },
+  {
+    "src": "battery-charging-256x256.png",
+    "sizes": "256x256",
+    "type": "image/png"
   }
   ]
 }
