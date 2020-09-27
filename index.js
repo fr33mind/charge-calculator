@@ -3,7 +3,9 @@
 if('serviceWorker' in navigator) {
   navigator.serviceWorker
            .register('/charge-calculator/sw.js')
-           .then(function() { alert('Service Worker Registered'); });
+           .then(function() { 
+             //console.log('Service Worker Registered');
+          });
 }
 
 
@@ -28,11 +30,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt.prompt();
     // Wait for the user to respond to the prompt
     deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
-        } else {
-          console.log('User dismissed the A2HS prompt');
-        }
+        //if (choiceResult.outcome === 'accepted') {
+        //  console.log('User accepted the A2HS prompt');
+        //} else {
+        //  console.log('User dismissed the A2HS prompt');
+        //}
         deferredPrompt = null;
       });
   });
@@ -111,7 +113,7 @@ function onCurrentOrElectricPotentialChange()
   power_input.value = electric_potential * current;
 }
 
-function onEnergyTypeChanged()
+function onEnergyTypeChange()
 {
   let energy_type = energy_type_select.value;
   
@@ -167,7 +169,7 @@ function checkValidity()
   return true;
 }
 
-function onCalculateButtonClicked()
+function onCalculateButtonClick()
 {
   let valid = checkValidity();
   
@@ -217,14 +219,58 @@ function onCalculateButtonClicked()
   now.setTime(now.getTime() + (hours*60*60*1000) + (min*60*1000));
   end_time = getTimeFormatted(now.getHours(), now.getMinutes());
   estimated_time_element.textContent = getTimeFormatted(hours, min) + ' (From '+start_time+' to '+end_time+')';
+  
+  saveToLocalStorage();
 }
 
+function saveToLocalStorage()
+{
+  if (typeof(Storage) === "undefined") {
+    alert('LocalStorage is not available. Saving information will not be possible.');
+    return;
+  }
+  
+  let data = {};
+  let inputs = document.querySelectorAll('.inline-input');
+  
+  for (let i=0; i < inputs.length; i++) {
+    data[inputs[i].name] = inputs[i].value;
+  }
+  
+  window.localStorage.setItem('charge-calculator', JSON.stringify(data));
+}
+
+function loadFromLocalStorage()
+{
+  let data = window.localStorage.getItem('charge-calculator');
+  
+  if (!data)
+    return false;
+  
+  try {
+    data = JSON.parse(data);
+  }
+  catch(error) {
+    alert('Error decoding saved data: "' + error.message + '"');
+    return false;
+  }
+  
+  for(let key in data) {
+    let input = document.querySelector('.inline-input[name="'+key+'"]');
+    if (input)
+      input.value = data[key];
+  }
+  
+  return true;
+}
+
+loadFromLocalStorage();
 onVehicleChange();
-onEnergyTypeChanged();
+onEnergyTypeChange();
 
 vehicle_select.onchange = onVehicleChange;
 soh_input.onchange = onSohChange;
 current_input.onchange = onCurrentOrElectricPotentialChange;
 electric_potential_input.onchange = onCurrentOrElectricPotentialChange;
-energy_type_select.onchange = onEnergyTypeChanged;
-calculate_button.onclick = onCalculateButtonClicked;
+energy_type_select.onchange = onEnergyTypeChange;
+calculate_button.onclick = onCalculateButtonClick;
