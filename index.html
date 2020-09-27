@@ -2,20 +2,84 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Charge Calculator</title>
     <script src="index.js" defer></script>
     <link rel="manifest" href="manifest.webmanifest">
-    <style></style>
+    <link href="style.css" rel="stylesheet">
   </head>
   <body>
-  <div>
-    <select>
+  
+  <h2>Battery</h2>
+  <div class="field">
+    <label class="label">Vehicle:</label>
+    <select class="inline-input vehicle-select">
       <option value="leaf24">Leaf 24kWh</option>
       <option value="leaf30">Leaf 30kWh</option>
       <option value="leaf40">Leaf 40kWh</option>
       <option value="leaf62">Leaf 62kWh</option>
+      <option value="custom">Custom</option>
     </select>
   </div>
+  <div class="field soh-field hidden">
+    <label class="label">SOH (%):</label>
+    <input class="inline-input soh-input" type="number" name="soh" min="1" max="100" value="100">
+  </div>
+  
+  <div class="field">
+    <label class="label">Real Cap. (kWh):</label>
+    <input class="inline-input real-capacity-input" type="number" name="real_capacity" min="1">
+  </div>
+  
+  <h2>Energy</h2>
+  <div class="field">
+    <label class="label">Type:</label>
+    <select class="inline-input energy-type-select">
+      <option value="av" selected>Current and El. Potential (A*V)</option>
+      <option value="w">Power (W)</option>
+    </select>
+  </div>
+  <div class="field current-field">
+    <label class="label">Current (A):</label>
+    <input class="inline-input current-input" type="number" name="current" min="1" max="30" value="10" required>
+  </div>
+  <div class="field electric-potential-field">
+    <label class="label">El. Potential (V):</label>
+    <input class="inline-input electric-potential-input" type="number" name="electric_potential" min="190" max="240" value="220" required>
+  </div>
+  <div class="field">
+    <label class="label">Power (W):</label>
+    <input class="inline-input power-input" type="number" name="power" min="1" readonly required>
+  </div>
+  
+  <h2>Charge</h2>
+  <div class="field">
+    <label class="label">Actual SOC (%):</label>
+    <input class="inline-input actual-soc-input" type="number" name="actual_soc" min="0" max="99" value="20" required>
+  </div>
+  <div class="field">
+    <label class="label">Desired SOC (%):</label>
+    <input class="inline-input desired-soc-input" type="number" name="desired_soc" min="1" max="100" value="60" required>
+  </div>
+
+  <div class="field">
+    <label class="label">Start Time (HH:MM):</label>
+    <input class="inline-input start-time-input" type="text" name="start_time" placeholder="Now" pattern="^[0-9][0-9]:[0-9][0-9]$">
+  </div>
+  
+  <h2>Results</h2>
+  <div class="field">
+    <label class="label">Charge (kWh): <span class="charge-kwh"></span></label>
+  </div>
+  
+  <div class="field">
+    <label class="label">Estimated Time: <span class="estimated-time"></span></label>
+  </div>
+  
+  <div class="text-center">
+    <button class="calculate-button">Calculate</button>
+  </div>
+  
   <button class="add-button">Add to home screen</button>
   </body>
 </html>

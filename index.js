@@ -37,3 +37,194 @@ window.addEventListener('beforeinstallprompt', (e) => {
       });
   });
 });
+
+let vehicle_select  = document.querySelector('.vehicle-select');
+let soh_field  = document.querySelector('.soh-field');
+let soh_input  = document.querySelector('.soh-input');
+let real_capacity_input = document.querySelector('.real-capacity-input');
+let energy_type_select = document.querySelector('.energy-type-select');
+let current_field = document.querySelector('.current-field');
+let electric_potential_field = document.querySelector('.electric-potential-field');
+let current_input = document.querySelector('.current-input');
+let electric_potential_input = document.querySelector('.electric-potential-input');
+let power_input = document.querySelector('.power-input');
+let calculate_button = document.querySelector('.calculate-button');
+let actual_soc_input = document.querySelector('.actual-soc-input');
+let desired_soc_input = document.querySelector('.desired-soc-input');
+let charge_kwh_element = document.querySelector('.charge-kwh');
+let estimated_time_element = document.querySelector('.estimated-time');
+let start_time_input = document.querySelector('.start-time-input');
+let leafCapacity = {
+  "leaf24": "22",
+  "leaf30": "27",
+  "leaf40": "39",
+  "leaf62": "62"
+};
+
+function onVehicleChange()
+{
+  let vehicle = vehicle_select.value;
+  
+  if (vehicle === 'custom') {
+    soh_field.classList.add('hidden');
+    real_capacity_input.value = '';
+    real_capacity_input.removeAttribute('readonly');
+  }
+  else {
+    soh_field.classList.remove('hidden');
+    real_capacity_input.setAttribute('readonly', '');
+    real_capacity_input.value = getRealCapacity(vehicle).toFixed(2);
+  }  
+}
+
+function onSohChange()
+{
+  let vehicle = vehicle_select.value;
+  let soh = soh_input.value;
+ 
+  if (vehicle === 'custom')
+    return;
+  
+  real_capacity_input.value = getRealCapacity(vehicle, soh).toFixed(2);
+}
+
+function getRealCapacity(vehicle, soh)
+{
+  let capacity = 0;
+  
+  if (vehicle === undefined)
+    vehicle = vehicle_select.value;
+  
+  if (soh === undefined)
+    soh = soh_input.value;
+  
+  if (vehicle in leafCapacity)
+    capacity = parseInt(leafCapacity[vehicle]);
+  
+  return capacity * (soh / 100);
+}
+
+function onCurrentOrElectricPotentialChange()
+{
+  let current = current_input.value;
+  let electric_potential = electric_potential_input.value;
+  power_input.value = electric_potential * current;
+}
+
+function onEnergyTypeChanged()
+{
+  let energy_type = energy_type_select.value;
+  
+  if (energy_type === 'w') {
+    current_field.classList.add('hidden');
+    electric_potential_field.classList.add('hidden');
+    power_input.removeAttribute('readonly');
+  }
+  else if (energy_type === 'av') {
+    current_field.classList.remove('hidden');
+    electric_potential_field.classList.remove('hidden');
+    power_input.setAttribute('readonly', '');  
+    onCurrentOrElectricPotentialChange();
+  }
+}
+
+function getTimeFormatted(hours, minutes)
+{
+  if (hours < 10)
+    hours = '0' + hours;
+  
+  if (minutes < 10)
+    minutes = '0' + minutes;
+  
+  return hours + ':' + minutes;
+}
+
+function checkValidity()
+{
+  let actual_soc = parseInt(actual_soc_input.value);
+  let desired_soc = parseInt(desired_soc_input.value);
+  
+  if (desired_soc <= actual_soc) {
+    actual_soc_input.setCustomValidity('Invalid SOC');
+    desired_soc_input.setCustomValidity('Invalid SOC');
+  }
+  else {
+    actual_soc_input.setCustomValidity('');
+    desired_soc_input.setCustomValidity('');
+  }
+  
+  let inputs = document.querySelectorAll('.inline-input');
+  
+  for (let i=0; i < inputs.length; i++) {
+    if (typeof inputs[i].checkValidity !== 'function')
+      return null;
+    
+    if (!inputs[i].checkValidity()) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function onCalculateButtonClicked()
+{
+  let valid = checkValidity();
+  
+  if (valid === null) {
+    alert("Can't validate form. Browser probably too old, doesn't support checkValidity.");
+    return;
+  }
+  
+  if (!valid) {
+    charge_kwh_element.textContent = '';
+    estimated_time_element.textContent = '';
+    return;
+  }
+  
+  let actual_soc = parseInt(actual_soc_input.value);
+  let desired_soc = parseInt(desired_soc_input.value);
+  let real_capacity = parseFloat(real_capacity_input.value);
+  let charge_capacity = ((desired_soc - actual_soc) / 100) * real_capacity;
+  let power = parseInt(power_input.value);
+  
+  charge_kwh_element.textContent = charge_capacity.toFixed(2);
+  
+  let time = charge_capacity / (power / 1000);
+  let hours = parseInt(time);
+  let min = 0;
+  
+  if (hours > 0)
+    min = parseInt((time % hours) * 60);
+  else
+    min = parseInt(time * 60);
+  
+  let now = new Date();
+  let start_time = start_time_input.value;
+  let end_time = null;
+  
+  if (start_time) {
+    let split_time = start_time.split(':');
+    let start_hours = parseInt(split_time[0]);
+    let start_min = parseInt(split_time[1]);
+    now.setHours(start_hours);
+    now.setMinutes(start_min);
+  }
+  else {
+    start_time = getTimeFormatted(now.getHours(), now.getMinutes());
+  }
+  
+  now.setTime(now.getTime() + (hours*60*60*1000) + (min*60*1000));
+  end_time = getTimeFormatted(now.getHours(), now.getMinutes());
+  estimated_time_element.textContent = getTimeFormatted(hours, min) + ' (From '+start_time+' to '+end_time+')';
+}
+
+onVehicleChange();
+onEnergyTypeChanged();
+
+vehicle_select.onchange = onVehicleChange;
+soh_input.onchange = onSohChange;
+current_input.onchange = onCurrentOrElectricPotentialChange;
+electric_potential_input.onchange = onCurrentOrElectricPotentialChange;
+energy_type_select.onchange = onEnergyTypeChanged;
+calculate_button.onclick = onCalculateButtonClicked;
