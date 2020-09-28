@@ -12,8 +12,8 @@ if('serviceWorker' in navigator) {
 // Code to handle install prompt on desktop
 
 let deferredPrompt;
-const addBtn = document.querySelector('.add-button');
-addBtn.style.display = 'none';
+const addBtn = document.querySelector('.a2hs-button');
+const addBtnWrapper = document.querySelector('.a2hs-button-wrapper');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
@@ -21,11 +21,11 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
   // Update UI to notify the user they can add to home screen
-  addBtn.style.display = 'block';
+  addBtnWrapper.style.display = 'block';
 
   addBtn.addEventListener('click', (e) => {
     // hide our user interface that shows our A2HS button
-    addBtn.style.display = 'none';
+    addBtnWrapper.style.display = 'none';
     // Show the prompt
     deferredPrompt.prompt();
     // Wait for the user to respond to the prompt
@@ -70,11 +70,11 @@ function onVehicleChange()
   if (vehicle === 'custom') {
     soh_field.classList.add('hidden');
     real_capacity_input.value = '';
-    real_capacity_input.removeAttribute('readonly');
+    real_capacity_input.removeAttribute('disabled');
   }
   else {
     soh_field.classList.remove('hidden');
-    real_capacity_input.setAttribute('readonly', '');
+    real_capacity_input.setAttribute('disabled', '');
     real_capacity_input.value = getRealCapacity(vehicle).toFixed(2);
   }  
 }
@@ -120,12 +120,12 @@ function onEnergyTypeChange()
   if (energy_type === 'w') {
     current_field.classList.add('hidden');
     electric_potential_field.classList.add('hidden');
-    power_input.removeAttribute('readonly');
+    power_input.removeAttribute('disabled');
   }
   else if (energy_type === 'av') {
     current_field.classList.remove('hidden');
     electric_potential_field.classList.remove('hidden');
-    power_input.setAttribute('readonly', '');  
+    power_input.setAttribute('disabled', '');  
     onCurrentOrElectricPotentialChange();
   }
 }

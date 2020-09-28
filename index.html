@@ -9,12 +9,15 @@
     <link href="style.css" rel="stylesheet">
   </head>
   <body>
-  
-  <h2>Battery</h2>
+  <div class="a2hs-button-wrapper">
+    <button class="a2hs-button button">Add to home screen</button>
+  </div>
+  <div class="container">
+  <h2 class="first">Battery</h2>
   <div class="field">
     <label class="label">Vehicle:</label>
     <select class="inline-input vehicle-select" name="vehicle_select">
-      <option value="leaf24">Leaf 24kWh</option>
+      <option value="leaf24" selected>Leaf 24kWh</option>
       <option value="leaf30">Leaf 30kWh</option>
       <option value="leaf40">Leaf 40kWh</option>
       <option value="leaf62">Leaf 62kWh</option>
@@ -28,7 +31,7 @@
   
   <div class="field">
     <label class="label">Real Cap. (kWh):</label>
-    <input class="inline-input real-capacity-input" type="number" name="real_capacity" min="1">
+    <input class="inline-input real-capacity-input" type="number" name="real_capacity" min="1" disabled>
   </div>
   
   <h2>Energy</h2>
@@ -49,7 +52,7 @@
   </div>
   <div class="field">
     <label class="label">Power (W):</label>
-    <input class="inline-input power-input" type="number" name="power" min="1" readonly required>
+    <input class="inline-input power-input" type="number" name="power" min="1" disabled required>
   </div>
   
   <h2>Charge</h2>
@@ -77,9 +80,8 @@
   </div>
   
   <div class="text-center">
-    <button class="calculate-button">Calculate</button>
+    <button class="calculate-button button">Calculate</button>
   </div>
-  
-  <button class="add-button">Add to home screen</button>
+  </div>
   </body>
 </html>
