@@ -5,14 +5,16 @@ self.addEventListener('install', function(e) {
        '/charge-calculator/',
        '/charge-calculator/index.html',
        '/charge-calculator/index.js',
-       '/charge-calculator/battery-charging-64x64.png'
+       '/charge-calculator/style.css',
+       '/charge-calculator/battery-charging-64x64.png',
+       '/charge-calculator/battery-charging-256x256.png'
      ]);
    })
  );
 });
 
 self.addEventListener('fetch', function(e) {
-  console.log(e.request.url);
+  //console.log(e.request.url);
   e.respondWith(
     caches.match(e.request).then(function(response) {
       return response || fetch(e.request);
