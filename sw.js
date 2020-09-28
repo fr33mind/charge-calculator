@@ -21,3 +21,17 @@ self.addEventListener('fetch', function(e) {
     })
   );
 }); 
+
+self.addEventListener('activate', (event) => {
+  var cacheKeeplist = ['charge-calculator-store'];
+
+  event.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (cacheKeeplist.indexOf(key) === -1) {
+          return caches.delete(key);
+        }
+      }));
+    })
+  );
+});
