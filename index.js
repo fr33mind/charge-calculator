@@ -67,7 +67,12 @@ function onVehicleChange()
 {
   let vehicle = vehicle_select.value;
   
-  if (vehicle === 'custom') {
+  if (!vehicle) {
+    soh_field.classList.add('hidden');
+    real_capacity_input.value = '';
+    real_capacity_input.setAttribute('disabled', '');
+  }
+  else if (vehicle === 'custom') {
     soh_field.classList.add('hidden');
     real_capacity_input.value = '';
     real_capacity_input.removeAttribute('disabled');
