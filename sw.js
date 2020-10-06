@@ -1,6 +1,6 @@
 self.addEventListener('install', function(e) {
  e.waitUntil(
-   caches.open('charge-calculator-store').then(function(cache) {
+   caches.open('charge-calculator-store-v2').then(function(cache) {
      return cache.addAll([
        '/charge-calculator/',
        '/charge-calculator/index.html',
@@ -23,7 +23,7 @@ self.addEventListener('fetch', function(e) {
 }); 
 
 self.addEventListener('activate', (event) => {
-  var cacheKeeplist = ['charge-calculator-store'];
+  var cacheKeeplist = ['charge-calculator-store-v2'];
 
   event.waitUntil(
     caches.keys().then((keyList) => {
